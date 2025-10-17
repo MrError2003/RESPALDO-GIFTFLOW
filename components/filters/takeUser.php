@@ -15,7 +15,7 @@ function obtenerInformacionUsuario()
             'rol' => $mensajeRol,
             'extra_rol' => $mensajeExtraRol,
             'usuario' => htmlspecialchars($_SESSION['username']),
-            'foto' => htmlspecialchars($_SESSION['foto'])
+            'foto' => htmlspecialchars($_SESSION['foto']) // Ya incluye la ruta completa desde login.php
         ];
     } else {
         return [

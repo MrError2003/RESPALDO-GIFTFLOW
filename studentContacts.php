@@ -161,7 +161,7 @@ $contactHistory = $stmtHistory->get_result()->fetch_all(MYSQLI_ASSOC);
 </div>
 
 <?php include("controller/footer.php"); ?>
-<?php include("controller/botonFlotanteDerecho.php"); ?>
+<?php //include("controller/botonFlotanteDerecho.php"); ?>
 <?php include("components/sliderBarBotton.php"); ?>
 
 <!-- Scripts de Bootstrap, DataTables y personalizaciones -->

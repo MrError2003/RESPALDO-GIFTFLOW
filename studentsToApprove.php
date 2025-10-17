@@ -75,7 +75,7 @@ $rol = $infoUsuario['rol'];
     </div>
 </div>
 <?php include("controller/footer.php"); ?>
-<?php include("controller/botonFlotanteDerecho.php"); ?>
+<?php //include("controller/botonFlotanteDerecho.php"); ?>
 <?php include("components/sliderBarBotton.php"); ?>
 
 <!-- Scripts de Bootstrap, DataTables y personalizaciones -->

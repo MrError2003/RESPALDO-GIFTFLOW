@@ -79,7 +79,7 @@ $usaurio = htmlspecialchars($_SESSION["username"]);
                                     $genero = $userLog['genero'];
                                     $department = $userLog['rol'];
                                     $direccion = $userLog['direccion'];
-                                    $foto = $userLog['foto'];
+                                    $foto = 'img/fotoUsuarios/' . $userLog['foto']; // Construir la ruta completa al obtener de la DB
                                 }
 
 
@@ -263,7 +263,7 @@ $usaurio = htmlspecialchars($_SESSION["username"]);
     <?php endif; ?>
 
 
-<?php include("controller/botonFlotanteDerecho.php"); ?>
+<?php //include("controller/botonFlotanteDerecho.php"); ?>
 <?php include("components/sliderBarBotton.php"); ?>
 <?php include("controller/footer.php"); ?>
 

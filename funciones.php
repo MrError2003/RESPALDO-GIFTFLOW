@@ -167,6 +167,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     // Almacena el mensaje para mostrarlo en el frontend
                     $_SESSION['resultado_foto'] = $resultado;
                     echo json_encode($resultado); // Opcional: puedes devolver el resultado como JSON
+                    // Agregar redirección para evitar recarga del formulario y mostrar cambios
+                    header("Location: profile.php");
+                    exit;
                 } else {
                     echo json_encode(['error' => 'El usuario o la imagen no están definidos.']);
                 }
@@ -290,12 +293,12 @@ function crearRespuesta($mensaje, $tipo_mensaje, $urlPicture = null, $logoEncabe
     exit; // Asegúrate de salir después de enviar la respuesta
 }
 
-
 //actualizar foto de perfil
 function actualizarFotoPerfil($conn, $usuario, $imagen)
 {
-    $target_dir = "img/fotosUsuarios/";
-    $target_file = $target_dir . basename($imagen["name"]);
+    $target_dir = "img/fotoUsuarios/"; // Unificar carpeta sin "s" para consistencia
+    $fileName = basename($imagen["name"]);
+    $target_file = $target_dir . $fileName;
     $uploadOk = 1;
 
     // Verificar si el archivo es una imagen
@@ -304,7 +307,18 @@ function actualizarFotoPerfil($conn, $usuario, $imagen)
         return ['success' => false, 'message' => 'El archivo no es una imagen.'];
     }
 
-    // Obtener la foto actual del usuario
+    // Validar tipo de archivo (solo imágenes comunes)
+    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+    if (!in_array($imageFileType, ['jpg', 'jpeg', 'png', 'gif'])) {
+        return ['success' => false, 'message' => 'Solo se permiten archivos JPG, JPEG, PNG y GIF.'];
+    }
+
+    // Validar tamaño (ej. máximo 2MB)
+    if ($imagen["size"] > 2000000) {
+        return ['success' => false, 'message' => 'El archivo es demasiado grande (máximo 2MB).'];
+    }
+
+    // Obtener la foto actual del usuario (asumiendo que guarda solo el nombre)
     $sql = "SELECT foto FROM users WHERE username = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $usuario);
@@ -312,17 +326,22 @@ function actualizarFotoPerfil($conn, $usuario, $imagen)
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
 
-    if ($row && !empty($row['foto']) && file_exists($row['foto'])) {
-        // Eliminar la foto anterior
-        unlink($row['foto']);
+    if ($row && !empty($row['foto'])) {
+        $oldFile = $target_dir . $row['foto']; // Construir ruta completa para eliminar
+        if (file_exists($oldFile)) {
+            unlink($oldFile); // Eliminar la foto anterior
+        }
     }
 
     // Mover el archivo a la carpeta destino
     if (move_uploaded_file($imagen["tmp_name"], $target_file)) {
+        // Guardar solo el nombre del archivo en la DB para consistencia
         $sql = "UPDATE users SET foto = ? WHERE username = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ss", $target_file, $usuario);
+        $stmt->bind_param("ss", $fileName, $usuario);
         if ($stmt->execute()) {
+            // Actualizar la sesión con la ruta completa para que aparezca en header inmediatamente
+            $_SESSION['foto'] = $target_file;
             $_SESSION['resultado_foto'] = [
                 'success' => true,
                 'message' => 'Foto actualizada exitosamente.'

@@ -24,6 +24,20 @@ include("components/filters/takeUser.php");
 $infoUsuario = obtenerInformacionUsuario(); // Obtén la información del usuario
 $rol = $infoUsuario['rol'];
 
+// Obtener sedes del asesor si el rol es 'Asesor'
+$sedes = [];
+if ($rol == 'Asesor') {
+    $query = mysqli_query($conn, "SELECT sede1, sede2 FROM asesores_sedes WHERE username = '" . mysqli_real_escape_string($conn, $_SESSION['username']) . "'");
+    if ($row = mysqli_fetch_assoc($query)) {
+        if (!empty($row['sede1'])) {
+            $sedes[] = $row['sede1'];
+        }
+        if (!empty($row['sede2'])) {
+            $sedes[] = $row['sede2'];
+        }
+    }
+}
+
 // Verificar si el usuario tiene campos incompletos en su perfil
 $mostrar_alerta = false;
 $mensaje_campos = "";
@@ -110,7 +124,7 @@ if (isset($_SESSION['campos_incompletos']) && $_SESSION['campos_incompletos'] ==
 
 
 <?php include("controller/footer.php"); ?>
-<?php include("controller/botonFlotanteDerecho.php"); ?>
+<?php //include("controller/botonFlotanteDerecho.php"); ?>
 <?php include("components/sliderBarBotton.php"); ?>
 <!-- Scripts de Bootstrap, DataTables y personalizaciones -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
@@ -131,6 +145,44 @@ if (isset($_SESSION['campos_incompletos']) && $_SESSION['campos_incompletos'] ==
             },
             pagingType: "simple"
         });
+
+        // Mostrar Swal para seleccionar sede si es Asesor
+        var rol = '<?php echo $rol; ?>';
+        var sedes = <?php echo json_encode($sedes); ?>;
+        if (rol === 'Asesor' && sedes.length > 0) {
+            let options = '<option value="">Selecciona una sede</option>';
+            sedes.forEach(function(sede) {
+                options += '<option value="' + sede + '">' + sede + '</option>';
+            });
+            Swal.fire({
+                title: 'Seleccionar la sede en la que operaras',
+                html: '<select id="sedeSelector" class="form-control">' + options + '</select>',
+                showCancelButton: false,
+                allowOutsideClick: false,
+                confirmButtonText: 'Seleccionar',
+                preConfirm: () => {
+                    const sede = document.getElementById('sedeSelector').value;
+                    if (!sede) {
+                        Swal.showValidationMessage('Debes seleccionar una sede');
+                        return false;
+                    }
+                    return fetch('controller/setSede.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: 'sede=' + encodeURIComponent(sede)
+                    }).then(response => response.json());
+                }
+            }).then((result) => {
+                if (result.isConfirmed && result.value.success) {
+                    Swal.fire('Sede seleccionada', 'La sede ha sido guardada correctamente.', 'success');
+                } else {
+                    // Error, recargar o manejar
+                    location.reload();
+                }
+            });
+        }
 
         // Mostrar alerta si hay campos incompletos en el perfil del usuario
         <?php if ($mostrar_alerta): ?>

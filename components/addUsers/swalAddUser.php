@@ -26,17 +26,17 @@ function showAddUserSwal() {
                             <input type="text" class="form-control" id="nombre" name="nombre" required>
                         </div>
                         <div class="col-6 mb-3">
-                            <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-                                <span class="input-group-text" onclick="togglePassword('confirmPassword')"><i class="bi bi-eye" id="icon-confirmPassword"></i></span>
-                            </div>
-                        </div>
-                        <div class="col-6 mb-3">
                             <label for="password" class="form-label">Contraseña</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="password" name="password" required>
                                 <span class="input-group-text" onclick="togglePassword('password')"><i class="bi bi-eye" id="icon-password"></i></span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                <span class="input-group-text" onclick="togglePassword('confirmPassword')"><i class="bi bi-eye" id="icon-confirmPassword"></i></span>
                             </div>
                         </div>
                         
@@ -70,20 +70,22 @@ function showAddUserSwal() {
                             <label for="direccion" class="form-label">Dirección</label>
                             <input type="text" class="form-control" id="direccion" name="direccion" required>
                         </div>
-                        <div class="col-6 mb-3">
-                            <label for="edad" class="form-label">Edad</label>
-                            <input type="number" class="form-control" id="edad" name="edad" required>
+                        <div class="row justify-content-center">
+                            <div class="col-6 mb-3">
+                                <label for="edad" class="form-label">Edad</label>
+                                <input type="number" class="form-control" id="edad" name="edad" required>
+                            </div>
                         </div>
                     </div>
                     <div id="sedesSection" style="display: none;">
                         <div class="row">
                             <div class="col-6 mb-3">
                                 <label for="sede1" class="form-label">Sede 1</label>
-                                <input type="text" class="form-control" id="sede1" name="sede1">
+                                <select class="form-select" id="sede1" name="sede1"></select>
                             </div>
                             <div class="col-6 mb-3">
                                 <label for="sede2" class="form-label">Sede 2</label>
-                                <input type="text" class="form-control" id="sede2" name="sede2">
+                                <select class="form-select" id="sede2" name="sede2"></select>
                             </div>
                         </div>
                     </div>
@@ -143,6 +145,54 @@ function togglePassword(id) {
 function toggleSedes() {
     const rol = document.getElementById('rol').value;
     const sedesSection = document.getElementById('sedesSection');
-    sedesSection.style.display = rol == 3 ? 'block' : 'none';
+    if (rol == 3) {
+        sedesSection.style.display = 'block';
+        loadSedes();
+    } else {
+        sedesSection.style.display = 'none';
+    }
+}
+
+function loadSedes() {
+    fetch('controller/obtener_sedes.php')
+    .then(response => response.json())
+    .then(sedes => {
+        const sede1 = document.getElementById('sede1');
+        const sede2 = document.getElementById('sede2');
+        sede1.innerHTML = '<option value="">Seleccionar</option>';
+        sede2.innerHTML = '<option value="">Seleccionar</option>';
+        sedes.forEach(sede => {
+            const option1 = document.createElement('option');
+            option1.value = sede.nombre; 
+            option1.textContent = sede.nombre;
+            sede1.appendChild(option1);
+            
+            const option2 = document.createElement('option');
+            option2.value = sede.nombre; 
+            option2.textContent = sede.nombre;
+            sede2.appendChild(option2);
+        });
+        
+        // Agregar event listeners para evitar selección duplicada
+        sede1.addEventListener('change', () => updateSede2Options());
+        sede2.addEventListener('change', () => updateSede1Options());
+    })
+    .catch(error => console.error('Error cargando sedes:', error));
+}
+
+function updateSede2Options() {
+    const sede1Value = document.getElementById('sede1').value;
+    const sede2 = document.getElementById('sede2');
+    Array.from(sede2.options).forEach(option => {
+        option.disabled = option.value === sede1Value && sede1Value !== '';
+    });
+}
+
+function updateSede1Options() {
+    const sede2Value = document.getElementById('sede2').value;
+    const sede1 = document.getElementById('sede1');
+    Array.from(sede1.options).forEach(option => {
+        option.disabled = option.value === sede2Value && sede2Value !== '';
+    });
 }
 </script>

@@ -94,7 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             $_SESSION['nombre'] = htmlspecialchars($nombre); // Establecer el nombre real del usuario
                             $_SESSION['rol'] = $rol; // Asignar un rol real basado en tu base de datos
                             $_SESSION['username'] = htmlspecialchars($username); // Asignar nombre de usuario
-                            $_SESSION['foto'] = htmlspecialchars($foto); // Ruta de la foto del usuario
+                            $_SESSION['foto'] = 'img/fotoUsuarios/' . htmlspecialchars($foto); // Construir la ruta completa
                             $_SESSION['extra_rol'] = $extra_rol; // Campo extra_rol
                             $_SESSION['orden'] = $orden; // Estado del usuario
 
@@ -274,7 +274,22 @@ while ($empresaLog = mysqli_fetch_array($queryCompany)) {
                 <div class="mb-4 form-check">
                     <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe"
                         <?php echo isset($_COOKIE['username']) ? 'checked' : ''; ?>>
-                    <label class="form-check-label" for="rememberMe">Recordarme</label>
+                    <input type="checkbox" class="form-check-input custom-checkbox" id="rememberMe" name="rememberMe"
+                        <?php echo isset($_COOKIE['username']) ? 'checked' : ''; ?>>
+                    <label class="form-check-label text-black" for="rememberMe" style="font-size: 1.1rem;"><span class="ms-2">Recordarme</span></label>
+                    <style>
+                        .custom-checkbox {
+                            width: 1.5em;
+                            height: 1.5em;
+                            border: 2px solid #30336b;
+                            border-radius: 4px;
+                            accent-color: #30336b;
+                        }
+                        .custom-checkbox:checked {
+                            background-color: #30336b;
+                            border-color: #30336b;
+                        }
+                    </style>
                 </div>
 
                 <button type="submit" class="btn btn-login" name="iniciar">

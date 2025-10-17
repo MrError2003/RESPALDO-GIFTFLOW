@@ -50,8 +50,29 @@ require_once __DIR__ . '/../components/addUsers/swalAddUser.php';
                         </div>
                     <?php endif; ?>
 
-                    <?php if ($rol === 'Control maestro'): ?>
+                    <?php if ($rol === 'Administrador' || $rol === 'Control maestro' || $rol === 'Asesor'): ?>
                         <div class="col-4">
+                            <div class="checkbox"
+                                data-bs-toggle="popover"
+                                data-bs-trigger="hover focus"
+                                data-bs-placement="bottom"
+                                data-bs-content="Buscar asociados">
+                                <a href="busquedaIndividual.php">
+                                    <label class="checkbox-wrapper">
+                                        <span class="checkbox-tile">
+                                            <span class="checkbox-icon">
+                                                <i class="bi bi-person-bounding-box icono"></i>
+                                            </span>
+                                            <span class="checkbox-label">Buscar</span>
+                                        </span>
+                                    </label>
+                                </a>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($rol === 'Control maestro'): ?>
+                        <!-- <div class="col-4">
                             <div class="checkbox"
                                 data-bs-toggle="popover"
                                 data-bs-trigger="hover focus"
@@ -67,7 +88,7 @@ require_once __DIR__ . '/../components/addUsers/swalAddUser.php';
                                     </label>
                                 </a>
                             </div>
-                        </div>
+                        </div> -->
                     <?php endif; ?>
                 </div>
             </fieldset>
