@@ -71,6 +71,48 @@ require_once __DIR__ . '/../components/addUsers/swalAddUser.php';
                         </div>
                     <?php endif; ?>
 
+                    <?php if ($rol === 'Administrador' || $rol === 'Control maestro'): ?>
+                        <div class="col-4">
+                            <div class="checkbox"
+                                data-bs-toggle="popover"
+                                data-bs-trigger="hover focus"
+                                data-bs-placement="bottom"
+                                data-bs-content="Administrar usuarios">
+                                <a href="listUsers.php">
+                                    <label class="checkbox-wrapper">
+                                        <span class="checkbox-tile">
+                                            <span class="checkbox-icon">
+                                                <i class="bi bi-person-fill-gear icono"></i>
+                                            </span>
+                                            <span class="checkbox-label">Administrar</span>
+                                        </span>
+                                    </label>
+                                </a>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($rol === 'Administrador' || $rol === 'Control maestro'): ?>
+                        <div class="col-4">
+                            <div class="checkbox"
+                                data-bs-toggle="popover"
+                                data-bs-trigger="hover focus"
+                                data-bs-placement="bottom"
+                                data-bs-content="Configurar credenciales de correo">
+                                <a href="emailConfig.php">
+                                    <label class="checkbox-wrapper">
+                                        <span class="checkbox-tile">
+                                            <span class="checkbox-icon">
+                                                <i class="bi bi-envelope-exclamation-fill icono"></i>
+                                            </span>
+                                            <span class="checkbox-label">Configurar</span>
+                                        </span>
+                                    </label>
+                                </a>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
                     <?php if ($rol === 'Control maestro'): ?>
                         <!-- <div class="col-4">
                             <div class="checkbox"
