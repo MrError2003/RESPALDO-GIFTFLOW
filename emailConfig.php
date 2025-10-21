@@ -52,7 +52,7 @@ $rol = $infoUsuario['rol'];
 
         <div id="dashboard">
             <div class="position-relative bg-transparent">
-                <h2 class="position-absolute top-4 start-0"><i class="bi bi-envelope-exclamation-fill"></i> Configuración de corro (Smtp)</h2>
+                <h2 class="position-absolute top-4 start-0"><i class="bi bi-envelope-exclamation-fill"></i> Configuración de correo (Smtp)</h2>
             </div>
             <br><br>
             <hr>

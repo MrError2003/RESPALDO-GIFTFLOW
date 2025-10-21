@@ -90,9 +90,7 @@ require_once __DIR__ . '/../components/addUsers/swalAddUser.php';
                                 </a>
                             </div>
                         </div>
-                    <?php endif; ?>
 
-                    <?php if ($rol === 'Administrador' || $rol === 'Control maestro'): ?>
                         <div class="col-4">
                             <div class="checkbox"
                                 data-bs-toggle="popover"
@@ -106,6 +104,25 @@ require_once __DIR__ . '/../components/addUsers/swalAddUser.php';
                                                 <i class="bi bi-envelope-exclamation-fill icono"></i>
                                             </span>
                                             <span class="checkbox-label">Configurar</span>
+                                        </span>
+                                    </label>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="checkbox"
+                                data-bs-toggle="popover"
+                                data-bs-trigger="hover focus"
+                                data-bs-placement="bottom"
+                                data-bs-content="Editar información de la empresa">
+                                <a href="companyConfig.php">
+                                    <label class="checkbox-wrapper">
+                                        <span class="checkbox-tile">
+                                            <span class="checkbox-icon">
+                                                <i class="bi bi-building-gear icono"></i>
+                                            </span>
+                                            <span class="checkbox-label">Editar</span>
                                         </span>
                                     </label>
                                 </a>

@@ -1,3 +1,12 @@
+<?php
+$rol = $infoUsuario['rol']; // Obtener el rol del usuario
+$extraRol = $infoUsuario['extra_rol']; // Obtener el extra_rol del usuario
+
+$disableConfirm = in_array($rol, ['Administrador', 'Control maestro']);
+?>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
 <div class="container-fluid">
     <!-- Card de búsqueda -->
     <div class="row">
@@ -29,13 +38,16 @@
                 <div class="card-header d-flex justify-content-between align-items-center bg-teal-dark text-white">
                     <h5 class="mb-0"><i class="fas fa-user"></i> Información del Usuario</h5>
                     <div>
-                        <button id="btnConfirmarEntrega" class="btn bg-purple-dark text-white btn-sm me-2" type="button">
+                        <button id="btnVerEntrega" class="btn bg-purple-dark text-white btn-sm me-2" type="button" style="border: 1px solid #fff; display: none;">
+                            <i class="fas fa-eye"></i> Ver Entrega
+                        </button>
+                        <button id="btnConfirmarEntrega" class="btn bg-purple-dark text-white btn-sm me-2" type="button" style="border: 1px solid #fff;" <?php echo $disableConfirm ? 'disabled' : ''; ?>>
                             <i class="fas fa-gift"></i> Confirmar Entrega
                         </button>
                         <button id="btnEditar" class="btn bg-orange-dark text-white btn-sm me-2" type="button">
                             <i class="fas fa-edit"></i> Editar
                         </button>
-                        <button id="btnGuardar" class="btn bg-magenta-dark btn-sm" type="button" style="display: none;">
+                        <button id="btnGuardar" class="btn bg-magenta-dark text-white btn-sm" type="button" style="display: none;">
                             <i class="fas fa-save"></i> Guardar
                         </button>
                     </div>
@@ -43,91 +55,274 @@
                 <div class="card-body bg-light">
                     <input type="hidden" id="originalNumberId">
                     <div class="container-fluid">
-                        <!-- Primera fila: Número de ID (col-4) y Nombre (col-8) -->
+                        <!-- Primera fila: Número de ID (col-12 col-md-4) y Nombre (col-12 col-md-8) -->
                         <div class="row mb-4 p-2 bg-white rounded shadow-sm">
-                            <div class="col-4">
+                            <div class="col-12 col-md-4">
                                 <label class="form-label fw-bold text-teal-dark"><i class="fas fa-id-card"></i> Número de ID:</label>
                                 <input type="number" id="resultNumberId" class="form-control border-teal-dark" readonly>
                             </div>
-                            <div class="col-8">
+                            <div class="col-12 col-md-8">
                                 <label class="form-label fw-bold text-teal-dark"><i class="fas fa-user-tag"></i> Nombre:</label>
                                 <input type="text" id="resultName" class="form-control border-teal-dark" readonly>
                             </div>
                         </div>
-                        <!-- Segunda fila: Celular, Email, Empresa (col-4 cada uno) -->
+                        <!-- Segunda fila: Celular, Email, Empresa (col-12 col-md-4 cada uno) -->
                         <div class="row mb-4 p-2 bg-white rounded shadow-sm">
-                            <div class="col-4">
+                            <div class="col-12 col-md-4">
                                 <label class="fw-bold text-teal-dark"><i class="fas fa-phone"></i> Celular:</label>
                                 <input type="number" id="resultCellPhone" class="form-control border-teal-dark" readonly maxlength="10" oninput="this.value = this.value.slice(0, 10);">
                             </div>
-                            <div class="col-4">
+                            <div class="col-12 col-md-4">
                                 <label class="fw-bold text-teal-dark"><i class="fas fa-envelope"></i> Email:</label>
                                 <input type="text" id="resultEmail" class="form-control border-teal-dark" readonly>
                             </div>
-                            <div class="col-4">
+                            <div class="col-12 col-md-4">
                                 <label class="fw-bold text-teal-dark"><i class="fas fa-building"></i> Empresa:</label>
                                 <input type="text" id="resultCompany" class="form-control border-teal-dark" readonly>
                             </div>
                         </div>
-                        <!-- Tercera fila: Dirección, Ciudad, Género, Fecha de Registro (col-3 cada uno) -->
+                        <!-- Tercera fila: Dirección, Ciudad, Género, Fecha de Registro (col-12 col-md-3 cada uno) -->
                         <div class="row mb-4 p-2 bg-white rounded shadow-sm">
-                            <div class="col-3">
+                            <div class="col-12 col-md-3">
                                 <label class="fw-bold text-teal-dark"><i class="fas fa-map-marker-alt"></i> Dirección:</label>
                                 <input type="text" id="resultAddress" class="form-control border-teal-dark" readonly>
                             </div>
-                            <div class="col-3">
+                            <div class="col-12 col-md-3">
                                 <label class="fw-bold text-teal-dark"><i class="fas fa-city"></i> Ciudad:</label>
                                 <input type="text" id="resultCity" class="form-control border-teal-dark" readonly>
                             </div>
-                            <div class="col-3">
+                            <div class="col-12 col-md-3">
                                 <label class="fw-bold text-teal-dark"><i class="fas fa-venus-mars"></i> Género:</label>
                                 <select id="resultGender" class="form-control border-teal-dark" disabled>
-                                    <option value="Mujer">Mujer</option>
-                                    <option value="Hombre">Hombre</option>
-                                    <option value="Otro">Otro</option>
+                                    <option value="MUJER">Mujer</option>
+                                    <option value="HOMBRE">Hombre</option>
+                                    <option value="OTRO">Otro</option>
                                 </select>
                             </div>
-                            <div class="col-3">
+                            <div class="col-12 col-md-3">
                                 <label class="fw-bold text-teal-dark"><i class="fas fa-calendar-alt"></i> Fecha de Registro:</label>
                                 <input type="date" id="resultRegistrationDate" class="form-control border-teal-dark" readonly>
                             </div>
                         </div>
-                        <!-- Última fila: Data Update y Updated By centrados (col-4 cada uno) -->
+                        <!-- Última fila: Data Update, Updated By y Sede (col-12 col-md-4 cada uno) -->
                         <div class="row mb-2 justify-content-center p-2 bg-white rounded shadow-sm">
-                            <div class="col-4">
+                            <div class="col-12 col-md-4">
                                 <label class="fw-bold text-teal-dark"><i class="fas fa-sync-alt"></i> Se actualizaron los datos:</label>
                                 <select id="resultDataUpdate" class="form-control border-teal-dark" disabled>
                                     <option value="SI">SI</option>
                                     <option value="NO">NO</option>
                                 </select>
                             </div>
-                            <div class="col-4">
+                            <div class="col-12 col-md-4">
                                 <label class="fw-bold text-teal-dark"><i class="fas fa-user-edit"></i> Actualizado por:</label>
                                 <input type="text" id="resultUpdatedBy" class="form-control border-teal-dark" readonly>
                             </div>
-                        </div>
-                        <!-- Información de entrega (si existe) -->
-                        <div id="deliveryInfo" style="display: none;" class="mt-4 p-3 bg-indigo-light rounded shadow-sm text-center">
-                            <h6 class="fw-bold text-teal-dark mb-4"><i class="fas fa-gift"></i> Información de Entrega de Regalo</h6>
-                            <div class="d-flex flex-column align-items-center justify-content-center">
-                                <p class="mb-2"><strong>Fecha de entrega:</strong> <span id="deliveryDate"></span></p>
-                                <p class="mb-2"><strong>Entregado por:</strong> <span id="deliveredBy"></span></p>
-                                <p class="mb-2"><strong>Sede:</strong> <span id="deliverySede"></span></p>
-                                <p class="mb-2"><strong>Firma:</strong></p>
-                                <img id="deliverySignature" src="" alt="Firma" style="max-width: 250px; max-height: 120px; border: 1px solid #ccc; margin-bottom: 16px;">
-                                <div id="recipientInfo" style="display: none;" class="w-100 d-flex flex-column align-items-center">
-                                    <p class="mb-2"><strong>Número de documento del receptor:</strong> <span id="recipientNumber"></span></p>
-                                    <p class="mb-2"><strong>Nombre del receptor:</strong> <span id="recipientName"></span></p>
-                                    <button id="btnShowCarta" class="btn bg-indigo-dark text-white btn-sm mt-2" style="display: none;">Ver Carta de Autorización</button>
-                                </div>
+                            <div class="col-12 col-md-4">
+                                <label class="fw-bold text-teal-dark"><i class="fas fa-map-marker-alt"></i> Sede:</label>
+                                <input type="text" id="resultSede" class="form-control border-teal-dark" readonly>
                             </div>
                         </div>
+                        <!-- Información de entrega movida al modal -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal para información de entrega -->
+<div class="modal fade" id="deliveryModal" tabindex="-1" aria-labelledby="deliveryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-primary text-white position-relative overflow-hidden">
+                <h5 class="modal-title position-relative" id="deliveryModalLabel">
+                    <i class="fas fa-gift me-2"></i>
+                    Información de Entrega de Regalo
+                </h5>
+                <button type="button" class="btn-close btn-close-white position-relative" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="container-fluid">
+                    <!-- Información Principal de Entrega -->
+                    <div class="card border-0 shadow-sm mb-4 bg-light">
+                        <div class="card-header bg-indigo-dark text-white py-2">
+                            <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Datos de la Entrega</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center p-3 bg-white rounded-3 border-start border-4 border-success">
+                                        <div class="flex-shrink-0 me-3">
+                                            <i class="fas fa-calendar-alt text-success fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted d-block">Fecha de entrega</small>
+                                            <strong class="text-dark" id="modalDeliveryDate">-</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center p-3 bg-white rounded-3 border-start border-4 border-info">
+                                        <div class="flex-shrink-0 me-3">
+                                            <i class="fas fa-user-tie text-info fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted d-block">Entregado por</small>
+                                            <strong class="text-dark" id="modalDeliveredBy">-</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center p-3 bg-white rounded-3 border-start border-4 border-warning">
+                                        <div class="flex-shrink-0 me-3">
+                                            <i class="fas fa-map-marker-alt text-warning fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted d-block">Sede</small>
+                                            <strong class="text-dark" id="modalDeliverySede">-</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center p-3 bg-white rounded-3 border-start border-4 border-purple">
+                                        <div class="flex-shrink-0 me-3">
+                                            <i class="fas fa-gift text-purple fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted d-block">Tipo de Entrega</small>
+                                            <strong class="text-dark" id="modalDeliveryTipoEntrega">-</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Firma Digital -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-secondary text-white py-2">
+                            <h6 class="mb-0"><i class="fas fa-signature me-2"></i>Firma de Recepción</h6>
+                        </div>
+                        <div class="card-body bg-gradient-light w-100 d-flex justify-content-center align-items-center">
+                            <div class="signature-container p-3 bg-white rounded-3 border-2 border-dashed border-secondary">
+                                <img id="modalDeliverySignature" src="" alt="Firma"
+                                    class="img-fluid rounded shadow-sm"
+                                    style="max-width: 350px; max-height: 180px; min-height: 100px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Foto de Identificación -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-indigo-dark text-white py-2">
+                            <h6 class="mb-0"><i class="fas fa-id-card me-2"></i>Foto de Identificación</h6>
+                        </div>
+                        <div class="card-body bg-gradient-light w-100 d-flex justify-content-center align-items-center">
+                            <div class="photo-container p-3 bg-white rounded-3 border-2 border-dashed border-info">
+                                <img id="modalIdPhoto" src="" alt="Foto de Identificación"
+                                    class="img-fluid rounded shadow-sm"
+                                    style="max-width: 350px; max-height: 250px; min-height: 150px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información del Receptor -->
+                    <div id="modalRecipientInfo" class="card border-0 shadow-sm" style="display: none;">
+                        <div class="card-header bg-gradient-info text-white py-2">
+                            <h6 class="mb-0"><i class="fas fa-user-friends me-2"></i>Información del Receptor</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3 mb-3">
+                                <div class="col-12">
+                                    <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center p-3 bg-light rounded-3 border-start border-4 border-primary">
+                                        <div class="d-flex align-items-center mb-3 mb-md-0 me-md-3">
+                                            <div class="flex-shrink-0 me-3">
+                                                <i class="fas fa-id-card text-primary fs-4"></i>
+                                            </div>
+                                            <div>
+                                                <small class="text-muted d-block">Documento</small>
+                                                <strong class="text-dark" id="modalRecipientNumber">-</strong>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-shrink-0 me-3">
+                                                <i class="fas fa-user text-success fs-4"></i>
+                                            </div>
+                                            <div>
+                                                <small class="text-muted d-block">Nombre completo</small>
+                                                <strong class="text-dark" id="modalRecipientName">-</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-12 text-center">
+                                    <button id="modalBtnShowCarta" class="btn bg-indigo-dark text-white px-4 py-2" style="display: none;">
+                                        <i class="fas fa-file-pdf me-2"></i>Ver Carta de Autorización
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="modalRecipientMessages"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light border-top-0">
+                <div class="text-muted small w-100 text-center">
+                    <i class="fas fa-shield-alt me-1"></i>
+                    Información verificada y registrada en el sistema
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(45deg, var(--bs-teal-dark), var(--bs-indigo-dark)) !important;
+    }
+
+    .bg-gradient-light {
+        background: linear-gradient(135deg, var(--bs-gray-light), var(--bs-gray-light)) !important;
+    }
+
+    .bg-gradient-info {
+        background: linear-gradient(45deg, var(--bs-magenta-dark), var(--bs-magenta-dark)) !important;
+    }
+
+    .border-purple {
+        border-color: #6f42c1 !important;
+    }
+
+    .text-purple {
+        color: #6f42c1 !important;
+    }
+
+    .signature-container {
+        transition: all 0.3s ease;
+    }
+
+    .signature-container:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .modal-body .card {
+        transition: all 0.3s ease;
+    }
+
+    .modal-body .card:hover {
+        transform: translateY(-1px);
+    }
+
+    #modalRecipientMessages .alert {
+        border: none;
+        border-radius: 12px;
+        font-weight: 500;
+    }
+</style>
+
 
 <!-- Incluir Signature Pad para firma digital -->
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
@@ -163,6 +358,7 @@
                     document.getElementById('resultGender').value = data.data.gender;
                     document.getElementById('resultDataUpdate').value = data.data.data_update;
                     document.getElementById('resultUpdatedBy').value = data.data.updated_by || 'N/A'; // Mostrar N/A si vacío
+                    document.getElementById('resultSede').value = data.data.sede || 'N/A'; // Nuevo campo sede
                     // Guardar si tiene entrega
                     window.hasDelivery = data.has_delivery;
                     window.deliveryData = data.delivery;
@@ -170,22 +366,32 @@
                     // Ocultar botón guardar inicialmente
                     document.getElementById('btnGuardar').style.display = 'none';
 
-                    // Mostrar Swal con datos de entrega si existe
+                    // Inhabilitar botón de editar si data_update es 'SI'
+                    document.getElementById('btnEditar').disabled = (data.data.data_update === 'SI');
+
+                    // Mostrar/ocultar botones según si tiene entrega
                     if (data.has_delivery) {
-                        document.getElementById('deliveryInfo').style.display = 'block';
-                        document.getElementById('deliveryDate').textContent = data.delivery.reception_date;
-                        document.getElementById('deliveredBy').textContent = data.delivery.delivered_name || data.delivery.delivered_by;
-                        document.getElementById('deliverySede').textContent = data.delivery.sede || 'N/A';
-                        document.getElementById('deliverySignature').src = 'img/firmasRegalos/' + data.delivery.signature;
+                        document.getElementById('btnConfirmarEntrega').style.display = 'none';
+                        document.getElementById('btnVerEntrega').style.display = 'inline-block';
+
+                        // Llenar datos del modal
+                        let date = new Date(data.delivery.reception_date);
+                        document.getElementById('modalDeliveryDate').textContent = date.toLocaleDateString('es-ES');
+                        document.getElementById('modalDeliveredBy').textContent = data.delivery.delivered_name || data.delivery.delivered_by;
+                        document.getElementById('modalDeliverySede').textContent = data.delivery.sede || 'N/A';
+                        document.getElementById('modalDeliveryTipoEntrega').textContent = data.delivery.tipo_entrega || 'N/A';
+                        document.getElementById('modalDeliverySignature').src = 'img/firmasRegalos/' + data.delivery.signature;
+                        document.getElementById('modalIdPhoto').src = 'uploads/idPhotos/' + data.delivery.id_photo; // Nueva foto
 
                         if (data.delivery.recipient_number_id != data.data.number_id) {
-                            document.getElementById('recipientInfo').style.display = 'block';
-                            document.getElementById('recipientNumber').textContent = data.delivery.recipient_number_id;
-                            // Mostrar el nombre del receptor correctamente
-                            document.getElementById('recipientName').textContent = data.delivery.recipient_name || 'No registrado';
+                            // Mostrar información del receptor cuando es diferente
+                            document.getElementById('modalRecipientInfo').style.display = 'block';
+                            document.getElementById('modalRecipientNumber').textContent = data.delivery.recipient_number_id;
+                            document.getElementById('modalRecipientName').textContent = data.delivery.recipient_name || 'No registrado';
+
                             if (data.delivery.authorization_letter != 'N/A') {
-                                document.getElementById('btnShowCarta').style.display = 'inline-block';
-                                document.getElementById('btnShowCarta').addEventListener('click', () => {
+                                document.getElementById('modalBtnShowCarta').style.display = 'inline-block';
+                                document.getElementById('modalBtnShowCarta').onclick = () => {
                                     Swal.fire({
                                         title: 'Carta de Autorización',
                                         html: `<iframe src="uploads/cartasAutorizacion/${data.delivery.authorization_letter}" width="100%" height="400"></iframe>`,
@@ -193,13 +399,47 @@
                                         showConfirmButton: false,
                                         width: '50%'
                                     });
-                                });
+                                };
+                            } else {
+                                document.getElementById('modalBtnShowCarta').style.display = 'none';
+                            }
+
+                            // Limpiar mensajes previos
+                            document.getElementById('modalRecipientMessages').innerHTML = '';
+
+                            // Mostrar mensaje si el receptor es un usuario registrado
+                            if (data.recipient_is_user) {
+                                document.getElementById('modalRecipientMessages').innerHTML = `
+                                    <div class="alert alert-info d-flex align-items-center shadow-sm">
+                                        <div class="flex-shrink-0 me-3">
+                                            <i class="fas fa-user-check fs-3 text-info"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Usuario Registrado</strong><br>
+                                            <small>Esta persona también es un asociado actualmente registrado en el sistema.</small>
+                                        </div>
+                                    </div>
+                                `;
                             }
                         } else {
-                            document.getElementById('recipientInfo').style.display = 'none';
+                            // Mostrar mensaje de "misma persona"
+                            document.getElementById('modalRecipientInfo').style.display = 'block';
+                            document.getElementById('modalBtnShowCarta').style.display = 'none';
+                            document.getElementById('modalRecipientMessages').innerHTML = `
+                                <div class="alert alert-success d-flex align-items-center shadow-sm">
+                                    <div class="flex-shrink-0 me-3">
+                                        <i class="fas fa-user-check fs-3 text-success"></i>
+                                    </div>
+                                    <div>
+                                        <strong>Receptor Confirmado</strong><br>
+                                        <small>La misma persona registrada ha recibido su regalo directamente.</small>
+                                    </div>
+                                </div>
+                            `;
                         }
                     } else {
-                        document.getElementById('deliveryInfo').style.display = 'none';
+                        document.getElementById('btnConfirmarEntrega').style.display = 'inline-block';
+                        document.getElementById('btnVerEntrega').style.display = 'none';
                     }
                 } else {
                     Swal.fire('Usuario no encontrado', data.message, 'error');
@@ -215,11 +455,18 @@
     document.getElementById('btnEditar').addEventListener('click', function() {
         const inputs = document.querySelectorAll('#resultCard input');
         inputs.forEach(input => {
-            input.removeAttribute('readonly');
+            // Mantener deshabilitados los campos de número de ID, nombre, actualizado por y sede
+            if (input.id === 'resultNumberId' || input.id === 'resultName' || input.id === 'resultUpdatedBy' || input.id === 'resultSede') {
+                input.setAttribute('readonly', true);
+            } else {
+                input.removeAttribute('readonly');
+            }
         });
         const selects = document.querySelectorAll('#resultCard select');
         selects.forEach(select => {
-            select.removeAttribute('disabled');
+            if (select.id !== 'resultDataUpdate') { // Mantener resultDataUpdate siempre deshabilitado
+                select.removeAttribute('disabled');
+            }
         });
         document.getElementById('btnGuardar').style.display = 'inline-block';
     });
@@ -249,8 +496,9 @@
         formData.append('city', document.getElementById('resultCity').value);
         formData.append('registration_date', document.getElementById('resultRegistrationDate').value);
         formData.append('gender', document.getElementById('resultGender').value);
-        formData.append('data_update', document.getElementById('resultDataUpdate').value);
+        formData.append('data_update', 'SI'); // Forzar a 'SI' al actualizar
         formData.append('updated_by', document.getElementById('resultUpdatedBy').value);
+        formData.append('sede', document.getElementById('resultSede').value);
 
         fetch('components/individualSearch/updateData.php', {
                 method: 'POST',
@@ -269,9 +517,12 @@
                     });
                     const selects = document.querySelectorAll('#resultCard select');
                     selects.forEach(select => {
-                        select.setAttribute('disabled', true);
+                        select.setAttribute('disabled', true); // Mantener todos deshabilitados, incluyendo resultDataUpdate
                     });
                     document.getElementById('btnGuardar').style.display = 'none';
+                    // Actualizar el valor del select a 'SI' y deshabilitar el botón de editar
+                    document.getElementById('resultDataUpdate').value = 'SI';
+                    document.getElementById('btnEditar').disabled = true;
                 } else {
                     Swal.fire('Error', 'Error al actualizar: ' + data.message, 'error');
                 }
@@ -279,6 +530,12 @@
             .catch(error => {
                 Swal.fire('Error', 'Error en la solicitud: ' + error.message, 'error');
             });
+    });
+
+    // Botón Ver Entrega
+    document.getElementById('btnVerEntrega').addEventListener('click', function() {
+        const deliveryModal = new bootstrap.Modal(document.getElementById('deliveryModal'));
+        deliveryModal.show();
     });
 
     // Botón Confirmar Entrega
@@ -315,6 +572,11 @@
                         </div>
                     </div>
                     <div class="mb-3">
+                        <label for="photoFile" class="form-label fw-bold">Foto de identificación:</label>
+                        <small class="text-muted d-block mb-2">Sube una foto del carnet del trabajo, cédula o rostro de la persona.</small>
+                        <input type="file" id="photoFile" class="form-control" accept="image/*" required>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label fw-bold">Firma de recepción:</label>
                         <canvas id="signatureCanvas" width="400" height="200" style="border: 1px solid #ccc;"></canvas>
                         <br><button type="button" id="clearSignature" class="btn btn-secondary btn-sm">Limpiar Firma</button>
@@ -324,6 +586,7 @@
             showCancelButton: true,
             confirmButtonText: 'Confirmar Entrega',
             cancelButtonText: 'Cancelar',
+            showLoaderOnConfirm: true, // Agregar loader mientras se confirma
             didOpen: () => {
                 // Inicializar Signature Pad
                 const canvas = document.getElementById('signatureCanvas');
@@ -351,7 +614,12 @@
                 window.signaturePad = signaturePad;
             },
             preConfirm: () => {
-                const samePerson = document.querySelector('input[name="samePerson"]:checked').value;
+                const samePersonElement = document.querySelector('input[name="samePerson"]:checked');
+                if (!samePersonElement) {
+                    Swal.showValidationMessage('Selecciona si la persona que recibe es la misma del registro');
+                    return false;
+                }
+                const samePerson = samePersonElement.value;
                 let recipientNumberId = userNumberId;
                 let recipientName = userName;
                 let authorizationLetter = 'N/A';
@@ -367,6 +635,12 @@
                     authorizationLetter = file;
                 }
 
+                const photoFile = document.getElementById('photoFile').files[0];
+                if (!photoFile) {
+                    Swal.showValidationMessage('Debes subir una foto de identificación');
+                    return false;
+                }
+
                 if (window.signaturePad.isEmpty()) {
                     Swal.showValidationMessage('Debes firmar para confirmar');
                     return false;
@@ -378,7 +652,7 @@
                 ctx.fillStyle = 'white';
                 ctx.fillRect(0, 0, window.signaturePad.canvas.width, window.signaturePad.canvas.height);
 
-                const signatureDataURL = window.signaturePad.toDataURL(); // PNG con fondo blanco
+                const signatureDataURL = window.signaturePad.toDataURL();
 
                 const formData = new FormData();
                 formData.append('user_number_id', userNumberId);
@@ -386,6 +660,7 @@
                 formData.append('recipient_name', recipientName);
                 formData.append('signature', signatureDataURL);
                 formData.append('authorization_letter', authorizationLetter);
+                formData.append('id_photo', photoFile); // Cambiar de 'id_photo' a coincidir con PHP
 
                 return fetch('components/individualSearch/confirmDelivery.php', {
                         method: 'POST',
@@ -394,15 +669,31 @@
                     .then(response => response.json());
             }
         }).then((result) => {
-            console.log('Result:', result); // Agrega esto para depurar
+            console.log('Result:', result);
             if (result.isConfirmed) {
                 const data = result.value;
-                console.log('Data:', data); // Agrega esto para depurar
-                if (data.success) {
-                    Swal.fire('Éxito', 'Entrega confirmada correctamente.', 'success');
-                } else {
-                    Swal.fire('Error', data.message, 'error');
-                }
+                console.log('Data:', data);
+
+                // Mostrar loader mientras se procesa la respuesta
+                Swal.fire({
+                    title: 'Procesando...',
+                    html: 'Por favor espera mientras se confirma la entrega.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                setTimeout(() => { // Simula el delay, puedes quitar el setTimeout si no lo necesitas
+                    if (data.success) {
+                        Swal.fire('Éxito', 'Entrega confirmada correctamente.', 'success')
+                            .then(() => {
+                                location.reload();
+                            });
+                    } else {
+                        Swal.fire('Error', data.message, 'error');
+                    }
+                }, 800); // Ajusta el tiempo si lo deseas
             }
         });
     });

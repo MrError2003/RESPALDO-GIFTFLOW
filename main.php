@@ -24,17 +24,21 @@ include("components/filters/takeUser.php");
 $infoUsuario = obtenerInformacionUsuario(); // Obtén la información del usuario
 $rol = $infoUsuario['rol'];
 
-// Obtener sedes del asesor si el rol es 'Asesor'
+// Obtener sedes y entregas del asesor si el rol es 'Asesor'
 $sedes = [];
+$tipos_entrega = [];
+$sede_set = isset($_SESSION['sede']);
+$tipo_set = isset($_SESSION['tipo_entrega']);
 if ($rol == 'Asesor') {
     $query = mysqli_query($conn, "SELECT sede1, sede2 FROM asesores_sedes WHERE username = '" . mysqli_real_escape_string($conn, $_SESSION['username']) . "'");
     if ($row = mysqli_fetch_assoc($query)) {
-        if (!empty($row['sede1'])) {
-            $sedes[] = $row['sede1'];
-        }
-        if (!empty($row['sede2'])) {
-            $sedes[] = $row['sede2'];
-        }
+        if (!empty($row['sede1'])) $sedes[] = $row['sede1'];
+        if (!empty($row['sede2'])) $sedes[] = $row['sede2'];
+    }
+    // Obtener tipos de entrega
+    $queryTipos = mysqli_query($conn, "SELECT nombre FROM tipos_entrega ORDER BY nombre");
+    while ($rowTipo = mysqli_fetch_assoc($queryTipos)) {
+        $tipos_entrega[] = $rowTipo['nombre'];
     }
 }
 
@@ -105,7 +109,7 @@ if (isset($_SESSION['campos_incompletos']) && $_SESSION['campos_incompletos'] ==
                 </div>
             </div>
             <hr>
-            <?php //include("components/cardContadores/contadoresCards.php"); ?> <!-- Tarjetas de contadores principales -->
+            <?php include("components/cardContadores/contadoresCards.php"); ?> <!-- Tarjetas de contadores principales -->
 
             <?php //include("components/aceptUsers/updateStatus.php");  
             ?>
@@ -149,36 +153,49 @@ if (isset($_SESSION['campos_incompletos']) && $_SESSION['campos_incompletos'] ==
         // Mostrar Swal para seleccionar sede si es Asesor
         var rol = '<?php echo $rol; ?>';
         var sedes = <?php echo json_encode($sedes); ?>;
-        if (rol === 'Asesor' && sedes.length > 0) {
-            let options = '<option value="">Selecciona una sede</option>';
+        var tipos_entrega = <?php echo json_encode($tipos_entrega); ?>;
+        var sede_set = <?php echo $sede_set ? 'true' : 'false'; ?>;
+        var tipo_set = <?php echo $tipo_set ? 'true' : 'false'; ?>;
+        if (rol === 'Asesor' && sedes.length > 0 && tipos_entrega.length > 0 && (!sede_set || !tipo_set)) {
+            let optionsSede = '<option value="">Selecciona una sede</option>';
             sedes.forEach(function(sede) {
-                options += '<option value="' + sede + '">' + sede + '</option>';
+                optionsSede += '<option value="' + sede + '">' + sede + '</option>';
+            });
+            let optionsTipo = '<option value="">Selecciona un tipo de entrega</option>';
+            tipos_entrega.forEach(function(tipo) {
+                optionsTipo += '<option value="' + tipo + '">' + tipo + '</option>';
             });
             Swal.fire({
-                title: 'Seleccionar la sede en la que operaras',
-                html: '<select id="sedeSelector" class="form-control">' + options + '</select>',
+                title: '¿En qué sede y tipo de entrega vas a trabajar hoy?',
+                html: `
+                    <select id="sedeSelector" class="form-control mb-3">` + optionsSede + `</select>
+                    <select id="tipoEntregaSelector" class="form-control">` + optionsTipo + `</select>
+                `,
                 showCancelButton: false,
                 allowOutsideClick: false,
                 confirmButtonText: 'Seleccionar',
                 preConfirm: () => {
                     const sede = document.getElementById('sedeSelector').value;
-                    if (!sede) {
-                        Swal.showValidationMessage('Debes seleccionar una sede');
+                    const tipo_entrega = document.getElementById('tipoEntregaSelector').value;
+                    if (!sede || !tipo_entrega) {
+                        Swal.showValidationMessage('Debes seleccionar una sede y un tipo de entrega');
                         return false;
                     }
                     return fetch('controller/setSede.php', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: 'sede=' + encodeURIComponent(sede)
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: 'sede=' + encodeURIComponent(sede) + '&tipo_entrega=' + encodeURIComponent(tipo_entrega)
                     }).then(response => response.json());
                 }
             }).then((result) => {
                 if (result.isConfirmed && result.value.success) {
-                    Swal.fire('Sede seleccionada', 'La sede ha sido guardada correctamente.', 'success');
+                    // Actualizar los campos en el header sin recargar
+                    const sede = document.getElementById('sedeSelector').value;
+                    const tipo_entrega = document.getElementById('tipoEntregaSelector').value;
+                    document.getElementById('headerSede').textContent = sede;
+                    document.getElementById('headerTipoEntrega').textContent = tipo_entrega;
+                    Swal.fire('Seleccionado', 'La sede y tipo de entrega han sido guardados correctamente.', 'success');
                 } else {
-                    // Error, recargar o manejar
                     location.reload();
                 }
             });

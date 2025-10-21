@@ -46,7 +46,7 @@ $usaurio = htmlspecialchars($_SESSION["username"]);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.css" rel="stylesheet">
-    <link rel="icon" href="img/uttInnova.png" type="image/x-icon">
+    <link rel="icon" href="img/gift_flow_icono.png" type="image/x-icon">
 
 
 </head>
